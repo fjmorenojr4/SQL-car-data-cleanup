@@ -1,0 +1,203 @@
+-- Data Cleaning project
+
+-- Confirming that gas and diesel are the only fuel options. Brings up only gas and diesel
+
+SELECT DISTINCT fuel_type
+
+FROM `car-annotated-project-coursera.Cars.Cars_info`
+
+-- Confirming that all strings are spelled correctly.
+
+--body_style
+
+SELECT DISTINCT body_style
+
+FROM `car-annotated-project-coursera.Cars.Cars_info`
+
+-- number of doors
+
+SELECT DISTINCT num_of_doors
+
+FROM `car-annotated-project-coursera.Cars.Cars_info`   -- result is one of the rows comes up as null.
+
+-- verifying where num_of_doors is not set to a string value so I can update to string
+
+Select num_of_doors, make, fuel_type body_style
+from `car-annotated-project-coursera.Cars.Cars_info`
+where num_of_doors is null                     -- results show makes for dodge and mazada with body_style gas and diesel have null num_of_doors
+
+-- Updating the two nulls from null to strings
+
+UPDATE `car-annotated-project-coursera.Cars.Cars_info`
+SET num_of_doors = "four"
+where fuel_type ="gas"
+and make= "dodge"
+and body_style = "sedan";
+
+
+UPDATE `car-annotated-project-coursera.Cars.Cars_info`
+SET num_of_doors = "two"
+where fuel_type ="diesel"
+and make = "mazda"
+and body_style = "sedan";
+
+-- ran queue below to ensure update was made.
+
+Select num_of_doors, make, fuel_type body_style
+from `car-annotated-project-coursera.Cars.Cars_info`
+where num_of_doors is null  
+
+-- body style
+
+SELECT DISTINCT body stye
+
+FROM `car-annotated-project-coursera.Cars.Cars_info`
+
+--wheel drive
+
+SELECT DISTINCT drive_wheels
+
+FROM `car-annotated-project-coursera.Cars.Cars_info`  -- Result: 4wd has two rows. Will do a length check to verify if  there is an extra space.
+
+SELECT distinct drive_wheels,
+length (drive_wheels)
+from `car-annotated-project-coursera.Cars.Cars_info`         -- Result: one 4wd has four characters in the string
+
+-- Using the trim function to get the 4wd to three characters
+UPDATE `car-annotated-project-coursera.Cars.Cars_info`
+Set drive_wheels= TRIM(drive_wheels)
+WHERE TRUE;
+
+SELECT distinct drive_wheels,
+length (drive_wheels)
+from `car-annotated-project-coursera.Cars.Cars_info`   -- RERAN TO ENSURE UPDATE WAS DONE CORRECTLY. IT WAS.
+
+-- engine location
+
+Select distinct engine_location
+from `car-annotated-project-coursera.Cars.Cars_info`
+
+
+-- engine type
+Select distinct engine_type
+from `car-annotated-project-coursera.Cars.Cars_info`
+
+-- number of cylinders
+Select distinct num_of_cylinders	
+from `car-annotated-project-coursera.Cars.Cars_info`  -- Result: one of the number of cylinders shows to be tow INSTEAD OF two
+
+--Fixing the tow to show two
+SELECT num_of_cylinders, make, fuel_type
+from `car-annotated-project-coursera.Cars.Cars_info`
+where num_of_cylinders= "tow"                                   -- make is mazda and fuel type is gas
+
+UPDATE `car-annotated-project-coursera.Cars.Cars_info`
+Set num_of_cylinders="two"
+where make = "mazda"
+and fuel_type = "gas"                                             -- fixed to show as two instead of tow
+
+Select distinct num_of_cylinders	
+from `car-annotated-project-coursera.Cars.Cars_info`               -- reran to ensure query ran correct
+
+
+--fuel system
+Select distinct fuel_system	
+from `car-annotated-project-coursera.Cars.Cars_info` 
+
+-- verifying all the cost totals are entered correct utilizing min and max function
+
+-- price: continuous from 5118 to 45400.
+SELECT 
+min(price) as min_price,
+max(price) as max_price
+FROM
+`car-annotated-project-coursera.Cars.Cars_info`;   --Result: min price shows as 0 not 5118
+
+--fixing price from 0 to 5118
+select price, body_style, make, fuel_type
+from `car-annotated-project-coursera.Cars.Cars_info`
+where price = 0                                                             -- result shows four cars have 0 price. Will need to verify with owner dataset what these prices could be
+
+SELECT
+min(highway_mpg) as min_highway_mpg,
+max(highway_mpg) as max_highway_mpg
+from `car-annotated-project-coursera.Cars.Cars_info`;                     -- results match data sheet given
+
+Select 
+min(city_mpg) as min_city_mpg,
+max(city_mpg) as max_city_mpg
+from `car-annotated-project-coursera.Cars.Cars_info`;                     -- results match data sheet given
+
+Select 
+min(horsepower) as min_horsepower,
+max(horsepower) as max_horsepower
+from `car-annotated-project-coursera.Cars.Cars_info`;                           -- results match data sheet given
+
+
+Select 
+min(compression_ratio	) as min_compression,
+max(compression_ratio	) as max_compression
+from `car-annotated-project-coursera.Cars.Cars_info`;                          --shows max compression ratio as 70.0
+
+Select 
+min(compression_ratio	) as min_compression,
+max(compression_ratio	) as max_compression
+from `car-annotated-project-coursera.Cars.Cars_info`
+where
+compression_ratio <> 70;                                                          --Shows max compression without 70.0 is 23.0. Will update 70.0 to 7.0
+
+SELECT
+COUNT(*) AS num_of_rows_to_delete
+FROM `car-annotated-project-coursera.Cars.Cars_info`
+WHERE compression_ratio = 70;                                                       --Shows one row with a compression max of 70.
+
+Delete  `car-annotated-project-coursera.Cars.Cars_info`
+where compression_ratio = 70;                                                  --Deleted compression ratio with 70.0
+
+
+--engine size
+SELECT 
+min(engine_size	) as min_engine_size,
+max(engine_size	) as max_engine_size
+FROM
+`car-annotated-project-coursera.Cars.Cars_info`;                       -- results match data sheet given
+
+--curb weight
+SELECT 
+min(curb_weight	) as min_curb_weight,
+max(curb_weight	) as max_curb_weight
+FROM
+`car-annotated-project-coursera.Cars.Cars_info`;                      -- results match data sheet given
+
+--height
+SELECT 
+min(height) as min_height,
+max(height) as max_height
+FROM
+`car-annotated-project-coursera.Cars.Cars_info`;               -- results match data sheet given
+
+
+--width
+
+SELECT 
+min(width) as min_width,
+max(width) as max_width
+FROM
+`car-annotated-project-coursera.Cars.Cars_info`;             -- results match data sheet given
+
+
+--length
+SELECT 
+min(length) as min_length,
+max(length) as max_length
+FROM
+`car-annotated-project-coursera.Cars.Cars_info`;                 -- results match data sheet given
+
+
+--wheel base
+
+SELECT 
+min(wheel_base) as min_wheel_base,
+max(wheel_base) as max_wheel_base
+FROM
+`car-annotated-project-coursera.Cars.Cars_info`;                    -- results match data sheet given
